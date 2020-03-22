@@ -13,7 +13,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_gravity="left"
     card_view:cardBackgroundColor="@color/grid_item_background"
-    card_view:cardCornerRadius="4dp"
+    card_view:cardCornerRadius="0dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     >
@@ -22,7 +22,7 @@
         android:layout_width="@dimen/video_grid_poster_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingBottom="5dip"
+        android:paddingBottom="0dip"
         android:descendantFocusability="blocksDescendants"
         android:background="@drawable/list_item_background"
         android:gravity="center"
@@ -85,6 +85,7 @@
 
         <!-- bottom area of the grid item -->
         <ProgressBar
+            android:visibility="gone"
             android:id="@+id/resume_notif"
             style="@style/BrowserResumeSlider"
             android:layout_width="match_parent"
@@ -95,6 +96,7 @@
             android:paddingLeft="0dip"
             android:progress="70" />
         <RelativeLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/resume_notif"

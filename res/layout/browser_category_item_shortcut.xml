@@ -4,6 +4,7 @@
     style="@style/SecondaryLine"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:fontFamily="@font/truenobd"
     android:minHeight="48dip"
     android:gravity="center_vertical"
     android:drawablePadding="24dip"

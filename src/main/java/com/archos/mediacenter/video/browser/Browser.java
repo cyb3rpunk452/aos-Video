@@ -60,6 +60,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.archos.filecorelibrary.MetaFile.FileType;
 import com.archos.mediacenter.utils.ActionBarSubmenu;
 import com.archos.mediacenter.utils.ActionBarSubmenu.ActionBarSubmenuListener;
@@ -69,11 +77,15 @@ import com.archos.mediacenter.utils.ThumbnailRequester;
 import com.archos.mediacenter.utils.trakt.Trakt;
 import com.archos.mediacenter.video.R;
 import com.archos.mediacenter.video.autoscraper.AutoScraperActivity;
+import com.archos.mediacenter.video.browser.adapters.object.Movie;
+import com.archos.mediacenter.video.browser.adapters.object.Video;
 import com.archos.mediacenter.video.browser.dialogs.DeleteDialog;
 import com.archos.mediacenter.video.browser.dialogs.DialogRetrieveSubtitles;
 import com.archos.mediacenter.video.browser.dialogs.Paste;
 import com.archos.mediacenter.video.browser.subtitlesmanager.SubtitleManager;
 import com.archos.mediacenter.video.browser.tools.MultipleSelectionManager;
+import com.archos.mediacenter.video.info.MovieAdditionalInfo;
+import com.archos.mediacenter.video.info.ProductionCompany;
 import com.archos.mediacenter.video.player.PlayerActivity;
 import com.archos.mediacenter.video.player.tvmenu.TVUtils;
 import com.archos.mediacenter.video.utils.ExternalPlayerResultListener;
@@ -83,9 +95,16 @@ import com.archos.mediacenter.video.utils.SubtitlesWizardActivity;
 import com.archos.mediacenter.video.utils.VideoPreferencesFragment;
 import com.archos.mediacenter.video.utils.VideoUtils;
 import com.archos.mediaprovider.ImportState;
+import com.archos.mediaprovider.video.ScraperStore;
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -168,6 +187,9 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
     static final String CURRENT_SCROLL = "currentscroll";
     private Parcelable mListState;
 
+    //r
+    private RequestQueue mRequestQueue;
+
 
     /**
      * Subclasses must create a new BrowserAdapter and according to the adapter
@@ -199,6 +221,9 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
             mCopyDialogID = bundle.getInt(COPY_DIALOG);
         }
         setHasOptionsMenu(true);
+
+        //r
+        mRequestQueue = Volley.newRequestQueue(getActivity());
     }
 
     @Override
@@ -419,11 +444,169 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
                         }
                     }
                 }
+
+
+
                 return false;
             }
         });
 
     }
+
+    //r
+//    public void getAdditionalInfo(){
+//        for (int position=0; position<mBrowserAdapter.getCount();position++){
+//            Movie movie = (Movie) mBrowserAdapter.getItem(position);
+//            //SharedPreferences sharedPreferences = getActivity().getSharedPreferences()
+//            Log.e("rmy",movie.getId()+" "+movie.getOnlineId());
+//        }
+//    }
+    StringBuilder movieWriters = new StringBuilder();
+    StringBuilder movieProducers = new StringBuilder();
+    String tagline;
+    String release_date;
+    String vote_count;
+    String vote_average;
+    HashMap<Integer,String> productionCompanyHashMap;
+    String mpaa_rating;
+    Movie movie;
+
+    public void getAdditionalInfo(){
+        for (int position=0; position<mBrowserAdapter.getCount();position++){
+
+            movie = (Movie) mBrowserAdapter.getItem(position);
+            long id = movie.getOnlineId();
+            //SharedPreferences sharedPreferences = getActivity().getSharedPreferences()
+
+            String movieURL = "https://api.themoviedb.org/3/movie/"+id+"?api_key=051012651ba326cf5b1e2f482342eaa2&language=en-US";
+            JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, movieURL, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                tagline = response.getString("tagline");
+                                release_date = response.getString("release_date");
+                                vote_count = response.getString("vote_count");
+                                vote_average = response.getString("vote_average");
+
+                                JSONArray production_companies = response.getJSONArray("production_companies");
+
+                                productionCompanyHashMap = new HashMap<>();
+                                for (int positionCompany=0; positionCompany<production_companies.length();positionCompany++){
+                                    JSONObject currentProductionCompany = production_companies.getJSONObject(positionCompany);
+                                    int companyID = currentProductionCompany.getInt("id");
+                                    String companyName = currentProductionCompany.getString("name");
+
+                                    productionCompanyHashMap.put(companyID,companyName);
+                                }
+
+
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("rmy Error: ", error.getMessage());
+                }
+            });
+
+            /* Add your Requests to the RequestQueue to execute */
+            mRequestQueue.add(req);
+
+            String movieCreditURL = "https://api.themoviedb.org/3/movie/"+id+"/credits?api_key=051012651ba326cf5b1e2f482342eaa2&language=en-US";
+
+
+            JsonObjectRequest req2 = new JsonObjectRequest(Request.Method.GET, movieCreditURL, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray jsonArrayCrew = response.getJSONArray("crew");
+                                for (int currentCrewMemberIndex=0; currentCrewMemberIndex<jsonArrayCrew.length();currentCrewMemberIndex++){
+                                    JSONObject currentCrewMember = (JSONObject)jsonArrayCrew.get(currentCrewMemberIndex);
+                                    //Log.e("rmy","job:"+currentCrewMember.getString("job"));
+                                    if(currentCrewMember.getString("job").equals("Writer")){
+                                        //Log.e("rmy","writer:"+currentCrewMember.getString("job"));
+                                        if(!movieWriters.toString().isEmpty()){
+                                            movieWriters.append(", ");
+                                        }
+                                        movieWriters.append(currentCrewMember.getString("name"));
+
+                                    }else if(currentCrewMember.getString("job").equals("Producer")){
+                                        //Log.e("rmy","producer:"+currentCrewMember.getString("job"));
+                                        if(!movieProducers.toString().isEmpty()){
+                                            movieProducers.append(", ");
+                                        }
+                                        movieProducers.append(currentCrewMember.getString("name"));
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("rmy Error: ", error.getMessage());
+                }
+            });
+
+            mRequestQueue.add(req2);
+
+
+            String movieMPAAURL = "https://api.themoviedb.org/3/movie/"+id+"/release_dates?api_key=051012651ba326cf5b1e2f482342eaa2&language=en-US";
+            JsonObjectRequest req3 = new JsonObjectRequest(Request.Method.GET, movieMPAAURL, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                JSONArray jsonArrayResults = response.getJSONArray("results");
+                                for (int currentResultIndex=0; currentResultIndex<jsonArrayResults.length();currentResultIndex++){
+                                    JSONObject currentResult = (JSONObject)jsonArrayResults.get(currentResultIndex);
+                                    //Log.e("rmy","job:"+currentCrewMember.getString("job"));
+                                    if(currentResult.getString("iso_3166_1").equals("US")) {
+                                        JSONArray releaseDates = currentResult.getJSONArray("release_dates");
+                                        JSONObject firstUSReleaseDate = (JSONObject)releaseDates.get(0);
+                                        mpaa_rating = firstUSReleaseDate.getString("certification");
+                                        Log.e("rmy",firstUSReleaseDate.getString("certification"));
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("rmy Error: ", error.getMessage());
+                }
+            });
+
+            mRequestQueue.add(req3);
+
+            MovieAdditionalInfo movieAdditionalInfo = new MovieAdditionalInfo(tagline,release_date,vote_count,vote_average,productionCompanyHashMap,movieWriters.toString(),movieProducers.toString(),String.valueOf(mpaa_rating));
+            Log.e("rmy",movieAdditionalInfo.toString());
+
+            Gson gson = new Gson();
+            String json = gson.toJson(movieAdditionalInfo);
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AdditionalInfo",Context.MODE_PRIVATE);
+            SharedPreferences.Editor sharedEditor = sharedPreferences.edit();
+            sharedEditor.putString(String.valueOf(id),json);
+            sharedEditor.commit();
+            sharedEditor.apply();
+
+
+
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -523,8 +706,11 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
 
     public void notifyDataSetChanged() {
         //setPosition();
-        if (mBrowserAdapter != null)
+        if (mBrowserAdapter != null){
             mBrowserAdapter.notifyDataSetChanged();
+            //r
+            //getAdditionalInfo();
+        }
 
     }
 
@@ -550,6 +736,13 @@ public abstract class Browser extends Fragment implements AbsListView.OnScrollLi
         }
         mArchosGridView.clearChoices();
         postBindAdapter();
+        //r
+        try{
+            getAdditionalInfo();
+        }catch (Exception e){
+            Log.e("rmy",e.getMessage());
+        }
+
     }
 
     public void loading(){

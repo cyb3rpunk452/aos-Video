@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/video_info_cardview_top_margin"
         card_view:cardCornerRadius="4dp"
-        android:id="@+id/scrap_trailer_container"
+        android:id="@+id/scrap_trailer_container2"
         android:layout_height="wrap_content"
         >
         <LinearLayout
@@ -36,9 +36,8 @@
                 android:paddingRight="@dimen/video_info_margin_simple"
                 android:paddingTop="@dimen/video_info_margin_half"
                 android:paddingBottom="@dimen/video_info_margin_half"
-
                 android:layout_width="match_parent"
-                android:id="@+id/trailer_layout"
+                android:id="@+id/trailer_layout2"
                 android:layout_height="wrap_content"></LinearLayout>
 
         </LinearLayout>
@@ -61,10 +60,19 @@
             android:orientation="vertical"
             >
             <LinearLayout
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
-
+                <ImageButton
+                    android:layout_marginRight="33dp"
+                    android:id="@+id/scrap_link_imdb"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="5dip"
+                    android:background="@drawable/transparent_ripple"
+                    android:layout_height="fill_parent"
+                    android:padding="5dip"
+                    android:src="@drawable/imdb_logo" />
                 <ImageButton
                     android:id="@+id/scrap_link_tmdb"
                     android:layout_width="wrap_content"
@@ -73,14 +81,7 @@
                     android:background="@drawable/transparent_ripple"
                     android:src="@drawable/tmdb_logo" />
 
-                <ImageButton
-                    android:id="@+id/scrap_link_imdb"
-                    android:layout_width="wrap_content"
-                    android:layout_marginLeft="5dip"
-                    android:background="@drawable/transparent_ripple"
-                    android:layout_height="fill_parent"
-                    android:padding="5dip"
-                    android:src="@drawable/imdb_logo" />
+
             </LinearLayout>
             <LinearLayout
 

@@ -29,13 +29,15 @@ category, and contents.
                 android:layout_alignParentTop="true"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:background="@color/leanback_background_transparent"
+                android:background="@color/main_background_color"
                 android:minHeight="?attr/actionBarSize"
+                android:elevation="0dp"
                 />
 
 
 
             <FrameLayout
+                android:background="@color/main_background_color"
                 android:id="@+id/content"
                 android:layout_below="@+id/main_toolbar"
                 android:layout_alignParentBottom="true"
@@ -52,7 +54,6 @@ category, and contents.
             android:id="@+id/category_container"
             android:fitsSystemWindows="true"
             android:layout_gravity="left|start"
-            android:background="@color/leanback_background"
             android:layout_height="match_parent"
             android:orientation="vertical" >
 

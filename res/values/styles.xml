@@ -93,7 +93,7 @@
         <item name="android:paddingLeft">@dimen/content_list_left_margin</item>
         <item name="android:paddingRight">@dimen/content_list_right_margin</item>
         <item name="android:clipToPadding">false</item>
-
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:textSize">18sp</item>
         <item name="android:drawSelectorOnTop">false</item>
         <item name="android:fastScrollEnabled">false</item><!-- true lead to errors on 4.0 -->

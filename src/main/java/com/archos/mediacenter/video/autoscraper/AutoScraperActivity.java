@@ -1177,6 +1177,9 @@ public class AutoScraperActivity extends Activity implements AbsListView.OnScrol
                         mFileProperties.put(path, itemProperties);
 
                         String ttl = movieTags.getTitle();
+
+
+
                         if (ttl != null && !ttl.isEmpty()) {
                             itemProperties.title = ttl;
                         }

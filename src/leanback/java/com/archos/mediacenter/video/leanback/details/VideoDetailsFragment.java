@@ -1283,6 +1283,9 @@ public class VideoDetailsFragment extends DetailsFragmentWithLessTopOffset imple
             if (tags!=null) {
                 // Plot & Genres
                 final String plot = tags.getPlot();
+                //r
+                final String tagline = tags.getTagline();
+
                 String genres = null;
                 if (tags instanceof VideoTags) {
                     genres = ((VideoTags) tags).getGenresFormatted();

@@ -23,7 +23,6 @@ public class PlotAndGenresRow extends FullWidthRow {
 
     final private String mPlot;
     final private String mGenres;
-
     public PlotAndGenresRow(String header, String plot, String genres) {
         super(new HeaderItem(header));
         mPlot = plot;

@@ -123,6 +123,7 @@
     <string name="directory_deleted">The folder was deleted</string>
     <string name="file_deleted">The file was deleted</string>
     <string name="resume">Resume</string>
+    <string name="resume_button_text">Resume\n</string>
     <string name="remote_resume">Remote resume</string>
     <string name="bookmark">Bookmark</string>
     <string name="delete">Delete</string>

@@ -43,8 +43,11 @@ public class MovieInfo extends BaseInfo {
     private float mRating;
     private String mPlot;
     private String mDirectors;
+    private String mProducers;
+    private String mWriters;
     private String mActors;
     private String mGenres;
+    private String mTagline;
 
     private File mCoverFile;
 
@@ -78,9 +81,12 @@ public class MovieInfo extends BaseInfo {
                 mYear = movieTag.getYear();
                 mRating = movieTag.getRating();
                 mDirectors = movieTag.getDirectorsFormatted();
+               // mProducers = movieTag.getProducersFormatted();
+                //mWriters = movieTag.getWritersFormatted();
                 mActors = movieTag.getActorsFormatted();
                 mGenres = movieTag.getGenresFormatted();
                 mPlot = movieTag.getPlot();
+                mTagline = movieTag.getTagline();
                 mValid = true;
             }
         } catch (Exception e) {
@@ -130,6 +136,17 @@ public class MovieInfo extends BaseInfo {
         return mCoverFile;
     }
 
+    public String getTagline() { return mTagline; }
+
+    public String getProducers() {
+        return mProducers;
+    }
+
+    public String getWriters() {
+        return mWriters;
+    }
+
+
     public void setDetailName(TextView view, Resources res) {
     }
 
@@ -161,6 +178,14 @@ public class MovieInfo extends BaseInfo {
         }
     }
 
+//    public void setProducers(String mProducers) {
+//        this.mProducers = mProducers;
+//    }
+//
+//    public void setWriters(String mWriters) {
+//        this.mWriters = mWriters;
+//    }
+
     public float getDetailLineRating() {
         return mRating;
     }
@@ -172,4 +197,6 @@ public class MovieInfo extends BaseInfo {
             view.setText(res.getString(R.string.scrap_year));
         }
     }
+
+
 }

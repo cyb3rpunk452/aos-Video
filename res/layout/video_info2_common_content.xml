@@ -8,11 +8,7 @@
 
     <RelativeLayout  android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/scroll_content"
-        android:paddingTop="@dimen/video_info_margin_half"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/info_activity_horizontal_margin"
-        android:paddingRight="@dimen/info_activity_horizontal_margin">
+        android:id="@+id/scroll_content">
         <FrameLayout
             android:id="@+id/poster_action_container"
             android:layout_width="match_parent"
@@ -99,8 +95,8 @@
             android:layout_height="wrap_content"
             layout="@layout/video_info2_subtitles"
             android:layout_gravity="center_horizontal|bottom"
-            android:layout_below="@+id/info_file_container"
             android:id="@+id/subtitles_container"
+            android:layout_below="@+id/info_file_container"
             android:layout_alignParentStart="true"
             android:layout_marginTop="@dimen/video_info_cardview_top_margin"
             />
